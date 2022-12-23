@@ -1,0 +1,18 @@
+### Authenticate
+POST https://api.nirvanahq.com/?api=rest
+Content-Type: application/x-www-form-urlencoded
+
+method=auth.new&u={{user.login}}&p={{user.password}}
+
+> {%
+    client.global.set("token", response.body.results[0].auth.token);
+%}
+
+### Get everything
+GET https://api.nirvanahq.com/?api=rest&appid={{appid}}&authtoken={{token}}&method=everything
+
+### Get tasks changed since 23/12/2022 at 18:12:45
+GET https://api.nirvanahq.com/?api=rest&appid={{appid}}&authtoken={{token}}&method=tasks&since=1671815565
+
+### Get user and preferences
+GET https://api.nirvanahq.com/?api=rest&appid={{appid}}&authtoken={{token}}&method=user&method=prefs

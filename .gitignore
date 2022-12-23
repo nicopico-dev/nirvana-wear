@@ -2,3 +2,6 @@
 build/
 .idea/
 *.private.env.json
+
+# I don't want to share my whole list with the world :')
+documentation/http/data-example.json

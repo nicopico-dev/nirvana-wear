@@ -1,11 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
+name: Integration
 
 on:
   push:
@@ -27,7 +20,13 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+    - name: Validate Gradle wrapper
+      uses: gradle/wrapper-validation-action@v1
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@2.4.2
+      uses: gradle/gradle-build-action@v2
       with:
         arguments: build
+    - name: Run static analysis with Detekt
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: detekt

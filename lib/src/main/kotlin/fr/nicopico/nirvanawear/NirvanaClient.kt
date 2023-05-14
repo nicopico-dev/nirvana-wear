@@ -3,6 +3,7 @@
  */
 package fr.nicopico.nirvanawear
 
+import fr.nicopico.nirvanawear.exceptions.AuthenticationException
 import fr.nicopico.nirvanawear.models.AuthToken
 import fr.nicopico.nirvanawear.models.json.AuthResponse
 import io.ktor.client.*
@@ -10,6 +11,7 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
@@ -29,15 +31,21 @@ class NirvanaClientKtor(
         }
     }
 
+    private val baseUrl = "https://api.nirvanahq.com"
+
     override suspend fun authenticate(login: String, password: String): AuthToken {
         val response =  httpClient.submitForm(
-            url = "https://api.nirvanahq.com/?api=rest",
+            url = "$baseUrl/?api=rest",
             formParameters = Parameters.build {
                 append("method", "auth.new")
                 append("u", login)
                 append("p", password)
             },
         )
+        if (response.status.isSuccess()) {
         return response.body<AuthResponse>().token
+        } else {
+            throw AuthenticationException(response.status.value, response.bodyAsText())
+        }
     }
 }

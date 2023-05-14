@@ -4,9 +4,14 @@
 package fr.nicopico.nirvanawear
 
 import fr.nicopico.nirvanawear.exceptions.AuthenticationException
+import fr.nicopico.nirvanawear.exceptions.FetchTasksException
 import fr.nicopico.nirvanawear.models.AuthToken
 import fr.nicopico.nirvanawear.models.Task
-import fr.nicopico.nirvanawear.models.json.AuthResponse
+import fr.nicopico.nirvanawear.json.ResponseJson
+import fr.nicopico.nirvanawear.json.result.TaskResultJson
+import fr.nicopico.nirvanawear.parse.toTask
+import fr.nicopico.nirvanawear.parse.tasks
+import fr.nicopico.nirvanawear.parse.token
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
@@ -47,7 +52,10 @@ class NirvanaClientKtor(
             },
         )
         if (response.status.isSuccess()) {
-            return response.body<AuthResponse>().token
+            return response.body<ResponseJson>()
+                .token
+                .let { AuthToken(it) }
+
         } else {
             throw AuthenticationException(response.status.value, response.bodyAsText())
         }
@@ -57,6 +65,19 @@ class NirvanaClientKtor(
         val response = httpClient.get(
             urlString = "$baseUrl/?api=rest&appid=$appId&authtoken=${token.value}&method=tasks&since=$since"
         )
-        TODO()
+        if (response.status.isSuccess()) {
+            return response.body<ResponseJson>()
+                .tasks
+                .map(TaskResultJson::toTask)
+        } else {
+            val reason = response.bodyAsText()
+            when (response.status) {
+                HttpStatusCode.Forbidden -> throw AuthenticationException(response.status.value, reason)
+                HttpStatusCode.Unauthorized -> throw AuthenticationException(response.status.value, reason)
+                else -> {
+                    throw FetchTasksException(response.status.value, reason)
+                }
+            }
+        }
     }
 }

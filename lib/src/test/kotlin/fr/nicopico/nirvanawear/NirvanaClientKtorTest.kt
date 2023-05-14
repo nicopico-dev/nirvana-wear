@@ -91,19 +91,19 @@ class NirvanaClientKtorTest {
         tasks shouldHaveSize 4
         tasks shouldMatchEach listOf(
             {
-                it.id shouldBe "B6A227BE-CA94-4ECF-1E3A-56C0EB04CA75"
+                it.id.value shouldBe "B6A227BE-CA94-4ECF-1E3A-56C0EB04CA75"
                 it.name shouldBe "Organiser un repas"
             },
             {
-                it.id shouldBe "C2D1B278-4486-4F19-5DB9-24AD13527666"
+                it.id.value shouldBe "C2D1B278-4486-4F19-5DB9-24AD13527666"
                 it.name shouldBe "Acheter un cadeau"
             },
             {
-                it.id shouldBe "850608D9-5949-423D-B44A-88F130B62F65"
-                it.name shouldBe "targetSDK 33 for all apps "
+                it.id.value shouldBe "850608D9-5949-423D-B44A-88F130B62F65"
+                it.name shouldBe "targetSDK 33 for all apps"
             },
             {
-                it.id shouldBe "9B6E085E-9981-4816-62DB-38DB434ECE22"
+                it.id.value shouldBe "9B6E085E-9981-4816-62DB-38DB434ECE22"
                 it.name shouldBe "Trouver un nouveau meuble TV"
             },
         )

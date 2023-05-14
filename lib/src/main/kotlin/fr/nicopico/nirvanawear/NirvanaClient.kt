@@ -5,11 +5,13 @@ package fr.nicopico.nirvanawear
 
 import fr.nicopico.nirvanawear.exceptions.AuthenticationException
 import fr.nicopico.nirvanawear.models.AuthToken
+import fr.nicopico.nirvanawear.models.Task
 import fr.nicopico.nirvanawear.models.json.AuthResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -18,10 +20,12 @@ import kotlinx.serialization.json.Json
 
 interface NirvanaClient {
     suspend fun authenticate(login: String, password: String): AuthToken
+    suspend fun fetchTasks(token: AuthToken, since: Long = 0): List<Task>
 }
 
 class NirvanaClientKtor(
-    engine: HttpClientEngine
+    engine: HttpClientEngine,
+    private val appId: String = "nirv-wear"
 ) : NirvanaClient {
     private val httpClient = HttpClient(engine) {
         install(ContentNegotiation) {
@@ -43,9 +47,16 @@ class NirvanaClientKtor(
             },
         )
         if (response.status.isSuccess()) {
-        return response.body<AuthResponse>().token
+            return response.body<AuthResponse>().token
         } else {
             throw AuthenticationException(response.status.value, response.bodyAsText())
         }
+    }
+
+    override suspend fun fetchTasks(token: AuthToken, since: Long): List<Task> {
+        val response = httpClient.get(
+            urlString = "$baseUrl/?api=rest&appid=$appId&authtoken=${token.value}&method=tasks&since=$since"
+        )
+        TODO()
     }
 }

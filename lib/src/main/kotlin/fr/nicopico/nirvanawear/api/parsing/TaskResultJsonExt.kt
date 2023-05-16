@@ -1,6 +1,6 @@
-package fr.nicopico.nirvanawear.parse
+package fr.nicopico.nirvanawear.api.parsing
 
-import fr.nicopico.nirvanawear.json.result.TaskResultJson
+import fr.nicopico.nirvanawear.api.json.result.TaskResultJson
 import fr.nicopico.nirvanawear.models.Task
 import fr.nicopico.nirvanawear.models.TaskId
 

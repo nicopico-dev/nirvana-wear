@@ -1,4 +1,4 @@
-package fr.nicopico.nirvanawear.exceptions
+package fr.nicopico.nirvanawear.api.exceptions
 
 class FetchTasksException(
     val httpStatus: Int,

@@ -1,25 +1,26 @@
 package fr.nicopico.nirvanawear
 
-import fr.nicopico.nirvanawear.exceptions.AuthenticationException
+import fr.nicopico.nirvanawear.api.NirvanaKtorClient
+import fr.nicopico.nirvanawear.api.exceptions.AuthenticationException
+import fr.nicopico.nirvanawear.api.parsing.tasks
+import fr.nicopico.nirvanawear.api.parsing.token
 import fr.nicopico.nirvanawear.models.AuthToken
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.assertions.throwables.shouldThrowMessage
-import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldMatchEach
-import io.kotest.matchers.collections.shouldNotMatchEach
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.ktor.client.engine.mock.*
-import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
-class NirvanaClientKtorTest {
+private const val APP_ID = "test"
+
+class NirvanaKtorClientTest {
 
     @Test
     fun `client is able to authenticate`(): Unit = runBlocking {
@@ -40,11 +41,11 @@ class NirvanaClientKtorTest {
                 )
             )
         }
-        val client = NirvanaClientKtor(mockEngine)
+        val client = NirvanaKtorClient(mockEngine, appId = APP_ID)
 
-        val token = client.authenticate("login", "password")
+        val response = client.authenticate("login", "password")
 
-        token.value shouldBe "c3c9e664fdc1d7ab54cb3979f2879a7c2944a98adf3349130b4b4be74b6b34bc"
+        response.token shouldBe "c3c9e664fdc1d7ab54cb3979f2879a7c2944a98adf3349130b4b4be74b6b34bc"
     }
 
     @Test
@@ -56,7 +57,7 @@ class NirvanaClientKtorTest {
             )
         }
 
-        val client = NirvanaClientKtor(mockEngine)
+        val client = NirvanaKtorClient(mockEngine, appId = APP_ID)
 
         val error = shouldThrow<AuthenticationException> {
             client.authenticate("login", "password")
@@ -84,26 +85,27 @@ class NirvanaClientKtorTest {
                 )
             )
         }
-        val client = NirvanaClientKtor(mockEngine)
+        val client = NirvanaKtorClient(mockEngine, appId = APP_ID)
 
-        val tasks = client.fetchTasks(authToken)
+        val response = client.fetchTasks(authToken)
 
+        val tasks = response.tasks
         tasks shouldHaveSize 4
         tasks shouldMatchEach listOf(
             {
-                it.id.value shouldBe "B6A227BE-CA94-4ECF-1E3A-56C0EB04CA75"
+                it.id shouldBe "B6A227BE-CA94-4ECF-1E3A-56C0EB04CA75"
                 it.name shouldBe "Organiser un repas"
             },
             {
-                it.id.value shouldBe "C2D1B278-4486-4F19-5DB9-24AD13527666"
+                it.id shouldBe "C2D1B278-4486-4F19-5DB9-24AD13527666"
                 it.name shouldBe "Acheter un cadeau"
             },
             {
-                it.id.value shouldBe "850608D9-5949-423D-B44A-88F130B62F65"
+                it.id shouldBe "850608D9-5949-423D-B44A-88F130B62F65"
                 it.name shouldBe "targetSDK 33 for all apps"
             },
             {
-                it.id.value shouldBe "9B6E085E-9981-4816-62DB-38DB434ECE22"
+                it.id shouldBe "9B6E085E-9981-4816-62DB-38DB434ECE22"
                 it.name shouldBe "Trouver un nouveau meuble TV"
             },
         )

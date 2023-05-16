@@ -1,8 +1,8 @@
-package fr.nicopico.nirvanawear.parse
+package fr.nicopico.nirvanawear.api.parsing
 
-import fr.nicopico.nirvanawear.exceptions.ParsingException
-import fr.nicopico.nirvanawear.json.ResponseJson
-import fr.nicopico.nirvanawear.json.result.TaskResultJson
+import fr.nicopico.nirvanawear.api.exceptions.ParsingException
+import fr.nicopico.nirvanawear.api.json.ResponseJson
+import fr.nicopico.nirvanawear.api.json.result.TaskResultJson
 
 internal val ResponseJson.token: String
     get() = results[0]

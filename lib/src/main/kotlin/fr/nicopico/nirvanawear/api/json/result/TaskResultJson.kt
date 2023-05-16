@@ -1,4 +1,4 @@
-package fr.nicopico.nirvanawear.json.result
+package fr.nicopico.nirvanawear.api.json.result
 
 import kotlinx.serialization.Serializable
 

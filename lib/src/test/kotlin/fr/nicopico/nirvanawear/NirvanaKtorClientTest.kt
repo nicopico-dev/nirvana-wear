@@ -11,6 +11,7 @@ import io.kotest.matchers.collections.shouldMatchEach
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldContainOnlyOnce
 import io.ktor.client.engine.mock.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
@@ -23,7 +24,7 @@ private const val APP_ID = "test"
 class NirvanaKtorClientTest {
 
     @Test
-    fun `client is able to authenticate`(): Unit = runBlocking {
+    fun `client can authenticate`(): Unit = runBlocking {
         val mockEngine = MockEngine { request ->
             request.body.contentType?.withoutParameters()?.toString() shouldBe
                     "application/x-www-form-urlencoded"
@@ -67,12 +68,13 @@ class NirvanaKtorClientTest {
     }
 
     @Test
-    fun `client is able to retrieve a list of tasks`(): Unit = runBlocking {
+    fun `client can retrieve a list of tasks`(): Unit = runBlocking {
         val authToken = AuthToken("AUTH_TOKEN")
         val mockEngine = MockEngine { request ->
             request.method shouldBe HttpMethod.Get
             request.url.encodedQuery should {
                 it shouldContain "authtoken=${authToken.value}"
+                it shouldContainOnlyOnce "method"
                 it shouldContain "method=tasks"
                 it shouldContain "since=0"
             }
@@ -87,7 +89,7 @@ class NirvanaKtorClientTest {
         }
         val client = NirvanaKtorClient(mockEngine, appId = APP_ID)
 
-        val response = client.fetchTasks(authToken)
+        val response = client.getResults(authToken, NirvanaMethods.Tasks)
 
         val tasks = response.tasks
         tasks shouldHaveSize 4

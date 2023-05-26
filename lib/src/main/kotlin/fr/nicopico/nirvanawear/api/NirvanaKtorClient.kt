@@ -44,9 +44,18 @@ class NirvanaKtorClient(
         }
     }
 
-    internal suspend fun fetchTasks(token: AuthToken, since: Long = 0): ResponseJson {
+    internal suspend fun getResults(token: AuthToken, vararg methods: NirvanaMethods, since: Long = 0): ResponseJson {
+        val methodsUrl = methods
+            .let {
+                if (it.isEmpty()) arrayOf(NirvanaMethods.Everything)
+                else methods
+            }
+            .joinToString(
+                separator = "&",
+                transform = { "method=${it.value}" },
+            )
         val response = httpClient.get(
-            urlString = "$baseUrl/?api=rest&appid=$appId&authtoken=${token.value}&method=tasks&since=$since"
+            urlString = "$baseUrl/?api=rest&appid=$appId&authtoken=${token.value}&$methodsUrl&since=$since"
         )
         if (response.status.isSuccess()) {
             return response.body<ResponseJson>()

@@ -1,0 +1,16 @@
+{
+    "fields": [
+        "authtoken",
+        "emailaddress",
+        "token",
+        "ip_address",
+        "lastactivityip",
+        "password",
+        "*.user.id",
+        "*.tag.key",
+        "*.task.id",
+        "*.task.name",
+        "*.task.note",
+        "*.task.tags"
+    ]
+}

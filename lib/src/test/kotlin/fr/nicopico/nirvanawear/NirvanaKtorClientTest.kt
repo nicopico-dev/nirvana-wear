@@ -1,6 +1,7 @@
 package fr.nicopico.nirvanawear
 
 import fr.nicopico.nirvanawear.api.NirvanaKtorClient
+import fr.nicopico.nirvanawear.api.NirvanaMethods
 import fr.nicopico.nirvanawear.api.exceptions.AuthenticationException
 import fr.nicopico.nirvanawear.api.parsing.tasks
 import fr.nicopico.nirvanawear.api.parsing.token
@@ -8,8 +9,10 @@ import fr.nicopico.nirvanawear.models.AuthToken
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldMatchEach
+import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldContainOnlyOnce
 import io.ktor.client.engine.mock.*
@@ -65,6 +68,34 @@ class NirvanaKtorClientTest {
         }
         error.reason shouldBe "Invalid username or password"
         error.httpStatus shouldBe 400
+    }
+
+    @Test
+    fun `client can retrieve everything since timestamp`(): Unit = runBlocking {
+        val authToken = AuthToken("AUTH_TOKEN")
+        val mockEngine = MockEngine { request ->
+            request.method shouldBe HttpMethod.Get
+            request.url.encodedQuery should {
+                it shouldContain "authtoken=${authToken.value}"
+                it shouldContainOnlyOnce "method"
+                it shouldContain "method=everything"
+                it shouldContain "since=1234"
+            }
+
+            respond(
+                content = ByteReadChannel(TestResource("fixtures/get-everythings-response.json").content!!),
+                status = HttpStatusCode.OK,
+                headers = headersOf(
+                    HttpHeaders.ContentType, "application/json"
+                )
+            )
+        }
+        val client = NirvanaKtorClient(mockEngine, appId = APP_ID)
+
+        val response = client.getResults(authToken, since = 1234)
+
+        response.request shouldNot beNull()
+        response.results shouldHaveSize 799
     }
 
     @Test

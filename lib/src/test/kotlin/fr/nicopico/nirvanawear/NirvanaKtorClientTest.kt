@@ -5,7 +5,7 @@ import fr.nicopico.nirvanawear.api.NirvanaMethods
 import fr.nicopico.nirvanawear.api.exceptions.AuthenticationException
 import fr.nicopico.nirvanawear.api.parsing.tasks
 import fr.nicopico.nirvanawear.api.parsing.token
-import fr.nicopico.nirvanawear.models.AuthToken
+import fr.nicopico.nirvanawear.api.AuthToken
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldMatchEach

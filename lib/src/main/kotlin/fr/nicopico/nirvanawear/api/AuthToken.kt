@@ -1,4 +1,4 @@
-package fr.nicopico.nirvanawear.models
+package fr.nicopico.nirvanawear.api
 
 @JvmInline
 value class AuthToken(

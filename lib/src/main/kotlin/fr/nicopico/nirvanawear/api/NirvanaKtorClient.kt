@@ -3,7 +3,6 @@ package fr.nicopico.nirvanawear.api
 import fr.nicopico.nirvanawear.api.exceptions.AuthenticationException
 import fr.nicopico.nirvanawear.api.exceptions.FetchTasksException
 import fr.nicopico.nirvanawear.api.json.ResponseJson
-import fr.nicopico.nirvanawear.models.AuthToken
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
